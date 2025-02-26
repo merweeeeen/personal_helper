@@ -4,17 +4,14 @@ import { ChangeEvent } from "react";
 
 export function Meal({
   onChange,
+  value,
 }: {
   onChange: (category: ChangeEvent<HTMLSelectElement>) => void;
+  value: string;
 }) {
   return (
     <>
-      <Input
-        component="select"
-        w={200}
-        onChange={onChange}
-        defaultValue={"Breakfast"}
-      >
+      <Input component="select" w={200} onChange={onChange} value={value}>
         {Object.keys(MealList)
           .filter((key) => isNaN(Number(key)))
           .map((category) => (
