@@ -1,19 +1,15 @@
 "use client";
 import { getUser } from "@/api/api";
-import { setItem } from "@/utils/localStorage";
 import {
   Button,
   Center,
-  Divider,
   PasswordInput,
   Stack,
   Text,
   TextInput,
   Title,
 } from "@mantine/core";
-import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
-import axios from "axios";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { usePersistedState } from "../hooks/usePersistedState";
 import { useRouter } from "next/navigation";
 
@@ -21,6 +17,7 @@ export default function Login() {
   // const [user, setUser] = useState<CredentialResponse>();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [user, setUser] = usePersistedState("user", {});
   const router = useRouter();
 
@@ -28,12 +25,14 @@ export default function Login() {
     const response = await getUser(email, password);
     if (response) {
       if (response["status"] == "Success") {
-        setUser({
-          email: response["data"]["email"],
-          password: response["data"]["password"],
-          name: response["data"]["name"],
-        });
-        router.push("/");
+        if (response["data"]) {
+          setUser({
+            email: response["data"]["email"],
+            password: response["data"]["password"],
+            name: response["data"]["name"],
+          });
+          router.push("/");
+        }
       }
     }
   }

@@ -1,8 +1,7 @@
 "use client";
-import { signUp, getData } from "@/api/api";
+import { signUp } from "@/api/api";
 import { setItem } from "@/utils/localStorage";
 import {
-  Alert,
   Button,
   Center,
   Dialog,
@@ -48,13 +47,15 @@ export default function Register() {
     }
 
     const response = await signUp(email, password, name);
-    if (response["status"] == "Failed") {
-      // prompt failed
-      toggle()
-      setError(response["message"]);
-    } else {
-      setItem("user", { email: email, password: password, name: name });
-      router.push("/");
+    if (response) {
+      if (response["status"] == "Failed") {
+        // prompt failed
+        toggle();
+        setError(response["message"]);
+      } else {
+        setItem("user", { email: email, password: password, name: name });
+        router.push("/");
+      }
     }
   };
   return (

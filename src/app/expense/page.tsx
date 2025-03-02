@@ -1,6 +1,5 @@
 "use client";
-import { Category, ComboBox } from "@/components/Combobox/Combobox";
-import { Meal } from "@/components/Meal/Meal";
+import { ComboBox } from "@/components/Combobox/Combobox";
 import {
   Button,
   Center,

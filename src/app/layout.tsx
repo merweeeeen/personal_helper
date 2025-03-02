@@ -3,7 +3,6 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import "@mantine/core/styles.css";
 import { createTheme, MantineProvider } from "@mantine/core";
-import { GoogleOAuthProvider } from "@react-oauth/google";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -32,9 +31,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <GoogleOAuthProvider clientId={process.env.GOOGLE_CLOUD_CLIENT_ID}>
           <MantineProvider theme={theme}>{children}</MantineProvider>
-        </GoogleOAuthProvider>
       </body>
     </html>
   );

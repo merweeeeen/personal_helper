@@ -14,7 +14,9 @@ export function ComboBox({ optionsList, onChange }: Props) {
   const [value, setValue] = useState<string>("");
   useEffect(() => {
     onChange(value);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
+  
   const options = optionsList.map((item) => (
     <Combobox.Option value={item} key={item}>
       {item}
