@@ -1,5 +1,5 @@
 "use client";
-import { Category } from "@/components/Category/Category";
+import { Category, ComboBox } from "@/components/Combobox/Combobox";
 import { Meal } from "@/components/Meal/Meal";
 import {
   Button,
@@ -13,16 +13,29 @@ import {
   Title,
 } from "@mantine/core";
 import { ChangeEvent, useState } from "react";
-import { sendExpense } from "../../api/apiCalls";
+import { sendExpense } from "../../api/api";
 import { useDisclosure } from "@mantine/hooks";
+import { getItem } from "@/utils/localStorage";
 
 export default function Tracker() {
+  const categoryOptions = [
+    "Food",
+    "Clothes",
+    "Investment",
+    "Bills",
+    "Miscellaneous",
+  ];
+
+  const mealOptions = ["Breakfast", "Lunch", "Dinner", "Snack", "Drinks"];
   const [item, setItem] = useState<string>("");
   const [amount, setAmount] = useState<number>(0);
   const [category, setCategory] = useState<string>("Food");
   const [meal, setMeal] = useState<string>("Breakfast");
   const [description, setDescription] = useState<string>("");
+  const [dialog, setDialog] = useState<string>("");
+
   const [opened, { toggle, close }] = useDisclosure(false);
+  const user = getItem("user");
 
   function handleItemChange(item: ChangeEvent<HTMLInputElement>) {
     setItem(item.target.value);
@@ -32,15 +45,15 @@ export default function Tracker() {
     setAmount(Number(amount));
   }
 
-  function handleCategoryChange(category: ChangeEvent<HTMLSelectElement>) {
-    setCategory(category.target.value);
-    if (category.target.value !== "Food") {
+  function handleCategoryChange(category: string) {
+    setCategory(category);
+    if (category !== "Food") {
       setMeal("");
     }
   }
 
-  function handleMealChange(meal: ChangeEvent<HTMLSelectElement>) {
-    setMeal(meal.target.value);
+  function handleMealChange(meal: string) {
+    setMeal(meal);
   }
 
   function handleDescriptionChange(description: ChangeEvent<HTMLInputElement>) {
@@ -48,21 +61,23 @@ export default function Tracker() {
   }
 
   function handleSubmit() {
-    console.log(item);
-    console.log(amount);
-    console.log(category);
-    console.log(meal);
-    console.log(description);
-    if (item == "" || amount == 0 || meal == "") {
+    if (item == "" || amount == 0) {
+      setDialog("Missing Fields");
       toggle();
       return;
     }
-    sendExpense(item, amount, category, description, meal);
+    if (category == "Food" && meal == "") {
+      setDialog("Meal Required");
+      toggle()
+      return
+    }
+    sendExpense(user["email"], item, amount, category, description, meal);
     setItem("");
     setAmount(0);
     setCategory("Food");
     setMeal("");
     setDescription("");
+    setDialog("Success");
   }
 
   return (
@@ -96,27 +111,43 @@ export default function Tracker() {
             <Text mr={20} w={70}>
               Category
             </Text>
-            <Category onChange={handleCategoryChange} value={category} />
+            <ComboBox
+              onChange={handleCategoryChange}
+              optionsList={categoryOptions}
+            />
           </Flex>
           {category == "Food" && (
             <Flex>
               <Text mr={20} w={70}>
                 Meal
               </Text>
-              <Meal onChange={handleMealChange} value={meal} />
+              <ComboBox optionsList={mealOptions} onChange={handleMealChange} />
             </Flex>
           )}
           <Flex>
             <Text mr={20} w={70}>
               Description
             </Text>
-            <TextInput w={200} onChange={handleDescriptionChange} value={description} />
+            <TextInput
+              w={200}
+              onChange={handleDescriptionChange}
+              value={description}
+            />
           </Flex>
           <Button onClick={handleSubmit}>Submit</Button>
         </Stack>
       </Center>
-      <Dialog opened={opened} withCloseButton onClose={close} bg="red">
-        <Text fw={700}>Missing Fields</Text>
+      <Dialog
+        opened={opened}
+        withCloseButton
+        onClose={close}
+        bg={dialog == "Success" ? "green" : "red"}
+      >
+        {dialog == "Success" ? (
+          <Text fw={700}>Expense Tracked</Text>
+        ) : (
+          <Text fw={700}>{dialog}</Text>
+        )}
       </Dialog>
     </>
   );

@@ -10,16 +10,16 @@ dotenv.config();
 // Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: process.env.FIREBASE_API_KEY,
-  authDomain: process.env.FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.FIREBASE_PROJECT_ID,
-  storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.FIREBASE_MESSAING_SENDER_ID,
-  appId: process.env.FIREBASE_APP_ID,
+  authDomain: "personalhelper-d6306.firebaseapp.com",
+  projectId: "personalhelper-d6306",
+  storageBucket: "personalhelper-d6306.firebasestorage.app",
+  messagingSenderId: "983043960617",
+  appId: "1:983043960617:web:6d657b8a42eb4eec02d138",
 };
 
 // Initialize Firebase
-initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
 
-const db = getFirestore();
+const db = getFirestore(app);
 
 export { db };
