@@ -15,6 +15,7 @@ export async function sendExpense(
   amount: number,
   category: string,
   description: string,
+  date: Date | null,
   meal?: string,
 ) {
   try {
@@ -24,7 +25,7 @@ export async function sendExpense(
       category: category,
       description: description,
       meal: meal ? meal : "",
-      time: new Date(),
+      time: date,
       is_active: true,
     });
     await updateDoc(doc(db, "users", email), {

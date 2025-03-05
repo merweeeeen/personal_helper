@@ -4,9 +4,10 @@ import { Input, InputBase, Combobox, useCombobox } from "@mantine/core";
 interface Props {
   optionsList: string[];
   onChange: (event: string) => void;
+  label: string;
 }
 
-export function ComboBox({ optionsList, onChange }: Props) {
+export function ComboBox({ label, optionsList, onChange }: Props) {
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption(),
   });
@@ -14,9 +15,9 @@ export function ComboBox({ optionsList, onChange }: Props) {
   const [value, setValue] = useState<string>("");
   useEffect(() => {
     onChange(value);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
-  
+
   const options = optionsList.map((item) => (
     <Combobox.Option value={item} key={item}>
       {item}
@@ -33,13 +34,14 @@ export function ComboBox({ optionsList, onChange }: Props) {
     >
       <Combobox.Target>
         <InputBase
+          label={label}
           component="button"
           type="button"
           pointer
           rightSection={<Combobox.Chevron />}
           rightSectionPointerEvents="none"
           onClick={() => combobox.toggleDropdown()}
-          w={200}
+          w={"100%"}
         >
           {value || <Input.Placeholder>Pick value</Input.Placeholder>}
         </InputBase>

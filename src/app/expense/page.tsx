@@ -11,6 +11,7 @@ import {
   TextInput,
   Title,
 } from "@mantine/core";
+import { DatePickerInput, DateValue } from "@mantine/dates";
 import { ChangeEvent, useState } from "react";
 import { sendExpense } from "../../api/api";
 import { useDisclosure } from "@mantine/hooks";
@@ -32,6 +33,7 @@ export default function Tracker() {
   const [meal, setMeal] = useState<string>("Breakfast");
   const [description, setDescription] = useState<string>("");
   const [dialog, setDialog] = useState<string>("");
+  const [date, setDate] = useState<Date | null>(null);
 
   const [opened, { toggle, close }] = useDisclosure(false);
   const user = getItem("user");
@@ -59,6 +61,12 @@ export default function Tracker() {
     setDescription(description.target.value);
   }
 
+  function handleDateChange(changedDate: DateValue) {
+    if (changedDate) {
+      setDate(changedDate);
+    }
+  }
+
   function handleSubmit() {
     if (item == "" || amount == 0) {
       setDialog("Missing Fields");
@@ -67,16 +75,24 @@ export default function Tracker() {
     }
     if (category == "Food" && meal == "") {
       setDialog("Meal Required");
-      toggle()
-      return
+      toggle();
+      return;
     }
-    sendExpense(user["email"], item, amount, category, description, meal);
+
+    if(date == null) {
+      setDialog("Date Required");
+      toggle();
+      return;
+    }
+
+    sendExpense(user["email"], item, amount, category, description, date, meal);
     setItem("");
     setAmount(0);
     setCategory("Food");
     setMeal("");
     setDescription("");
     setDialog("Success");
+    setDate(null)
   }
 
   return (
@@ -85,50 +101,52 @@ export default function Tracker() {
         <Stack>
           <Title>Track my expenses</Title>
           <Flex>
-            <Text mr={20} w={70}>
-              Item
-            </Text>
             <TextInput
-              w={200}
+              w={"100%"}
+              label="Item"
               onChange={handleItemChange}
               required
               value={item}
             />
           </Flex>
           <Flex>
-            <Text mr={20} w={70}>
-              Amount
-            </Text>
             <NumberInput
-              w={200}
+              w={"100%"}
+              label="Amount"
               onChange={handleAmountChange}
               required
               value={amount}
             />
           </Flex>
           <Flex>
-            <Text mr={20} w={70}>
-              Category
-            </Text>
             <ComboBox
+              label="Category"
               onChange={handleCategoryChange}
               optionsList={categoryOptions}
             />
           </Flex>
           {category == "Food" && (
             <Flex>
-              <Text mr={20} w={70}>
-                Meal
-              </Text>
-              <ComboBox optionsList={mealOptions} onChange={handleMealChange} />
+              <ComboBox
+                label="Meal"
+                optionsList={mealOptions}
+                onChange={handleMealChange}
+              />
             </Flex>
           )}
+          <DatePickerInput
+            w={"100%"}
+            value={date}
+            onChange={handleDateChange}
+            label="Date input"
+            placeholder="Date input"
+            size="sm"
+          />
+
           <Flex>
-            <Text mr={20} w={70}>
-              Description
-            </Text>
             <TextInput
-              w={200}
+              w={"100%"}
+              label="Description"
               onChange={handleDescriptionChange}
               value={description}
             />
